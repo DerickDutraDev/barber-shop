@@ -6,7 +6,8 @@
     --text-color-medium: #b4b4b4;
     --gold-color: #d4af37;
     --gold-dark: #b8942b;
-    --secondary-color: #2c2c2c; /* Cor de fundo para items da fila */
+    --secondary-color: #2c2c2c;
+    /* Cor de fundo para items da fila */
     --secondary-hover: #5a5a5a;
     --border-color: #4a4a4a;
     --success-color: #d4af37;
@@ -28,6 +29,7 @@ body {
     background-color: var(--bg-color);
     border-color: var(--border-color);
 }
+
 .logo-nav {
     width: 50px;
     height: 50px;
@@ -36,14 +38,17 @@ body {
     border: 2px solid var(--gold-color);
     box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
 }
+
 .navbar-brand .custom-title-nav {
     color: var(--gold-color);
     font-weight: bold;
     font-size: 1.5rem;
 }
+
 .navbar-text {
     color: var(--text-color-medium);
 }
+
 .btn-logout {
     background-color: transparent;
     border: 1px solid var(--border-color);
@@ -52,11 +57,13 @@ body {
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius-sm);
 }
+
 .btn-logout:hover {
     background-color: var(--secondary-color);
     color: var(--gold-color);
     border-color: var(--gold-color);
 }
+
 .btn-add-client {
     background-color: var(--gold-color);
     border: 1px solid var(--gold-color);
@@ -66,11 +73,13 @@ body {
     border-radius: var(--border-radius-sm);
     transition: all 0.2s ease-in-out;
 }
+
 .btn-add-client:hover {
     background-color: var(--gold-dark);
     border-color: var(--gold-dark);
     transform: scale(1.05);
 }
+
 .time-display {
     color: var(--text-color-medium);
     font-family: monospace;
@@ -80,11 +89,13 @@ body {
 .container {
     max-width: 1200px;
 }
+
 h2.text-warning {
     color: var(--gold-color) !important;
     font-size: 2rem;
     font-weight: 600;
 }
+
 .card-barber {
     background-color: var(--card-color);
     border: 1px solid var(--border-color);
@@ -92,9 +103,11 @@ h2.text-warning {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     transition: all 0.2s ease-in-out;
 }
+
 .card-barber:hover {
     transform: translateY(-5px);
 }
+
 .card-barber .card-header {
     background-color: var(--card-color);
     color: var(--gold-color);
@@ -121,6 +134,7 @@ h2.text-warning {
 .list-group {
     padding: 1rem;
 }
+
 .list-group-item {
     background-color: var(--secondary-color);
     color: var(--text-color-dark);
@@ -133,9 +147,11 @@ h2.text-warning {
     align-items: center;
     transition: all 0.2s ease-in-out;
 }
+
 .list-group-item:hover {
     background-color: var(--secondary-hover);
 }
+
 .list-group-item.empty-queue {
     font-style: italic;
     color: var(--text-color-medium);
@@ -145,9 +161,11 @@ h2.text-warning {
     border: none;
     border-radius: var(--border-radius-sm);
 }
+
 .client-info span {
     font-weight: 500;
 }
+
 .client-info small {
     color: var(--text-color-medium);
 }
@@ -162,6 +180,7 @@ h2.text-warning {
     border-radius: var(--border-radius-sm);
     transition: all 0.2s ease-in-out;
 }
+
 .btn-atender:hover {
     background-color: var(--success-hover);
     transform: scale(1.05);
@@ -174,13 +193,16 @@ h2.text-warning {
     border-radius: var(--border-radius-lg);
     color: var(--text-color-dark);
 }
+
 .modal-header {
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 1.5rem;
 }
+
 .modal-title {
     color: var(--text-color-dark);
 }
+
 .modal-body .form-control,
 .modal-body .form-select {
     background-color: var(--secondary-color);
@@ -189,15 +211,18 @@ h2.text-warning {
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius-sm);
 }
+
 .modal-body .form-control::placeholder {
     color: var(--text-color-medium);
 }
+
 .modal-body .form-control:focus,
 .modal-body .form-select:focus {
     border-color: var(--gold-color);
     box-shadow: 0 0 0 0.25rem rgba(212, 175, 55, 0.4);
     outline: none;
 }
+
 .btn-add-in-modal {
     background-color: var(--gold-color);
     border-color: var(--gold-color);
@@ -207,11 +232,13 @@ h2.text-warning {
     padding: 0.75rem 1rem;
     border-radius: var(--border-radius-sm);
 }
+
 .btn-add-in-modal:hover {
     background-color: var(--gold-dark);
     border-color: var(--gold-dark);
     transform: translateY(-2px);
 }
+
 .btn-close {
     filter: invert(1);
     background-color: transparent;
@@ -231,10 +258,12 @@ h2.text-warning {
     font-weight: 500;
     width: 100%;
 }
+
 #barber-selection-modal .barber-item:hover {
     background-color: var(--secondary-hover);
     border-color: var(--gold-color);
 }
+
 #barber-selection-modal .barber-item.selected {
     border-color: var(--gold-color);
     background-color: var(--gold-color);
@@ -245,8 +274,15 @@ h2.text-warning {
 
 /* Animações (réplica das animações de Framer Motion) */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .animate-fade-in {

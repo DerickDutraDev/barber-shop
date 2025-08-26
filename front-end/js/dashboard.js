@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!queueList) return;
 
             const queue = data[barber] || [];
-            
+
             let newQueueHtml = '';
             if (queue.length === 0) {
                 newQueueHtml = '<li class="list-group-item empty-queue animate-fade-in">Nenhum cliente na fila.</li>';
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             queueList.innerHTML = newQueueHtml;
         });
-        
+
         document.querySelectorAll('.btn-atender').forEach(button => {
             button.addEventListener('click', handleServeClient);
         });
@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnLogout) {
         btnLogout.addEventListener('click', handleLogout);
     }
-    
+
     // Lógica para selecionar o barbeiro no modal
     barberItemsModal.forEach(item => {
         item.addEventListener('click', () => {
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     // Rota: POST /serve-client
     async function handleServeClient(event) {
         const clientId = event.target.getAttribute('data-client-id');
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro de conexão ou ao buscar as filas:', error);
         }
     }
-    
+
     fetchQueues();
     setInterval(fetchQueues, 5000);
 });

@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const queuePositionDisplay = document.getElementById('queue-position-display');
 
     let currentClientId = null;
-    
+
     const barbers = {
         junior: 'Barbeiro Junior',
         yago: 'Barbeiro Yago',
@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         joinQueueBtn.disabled = true;
         joinQueueBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Entrando na fila...';
-        
+
         try {
             // Requisição para adicionar cliente
             const response = await fetch('http://localhost:3001/adicionar-cliente', {
@@ -66,18 +66,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 currentClientId = data.cliente_id;
-                
+
                 // Exibe o modal e atualiza a seção de espera
                 const queuePosition = data.posicao; // Assume que o backend retorna a posição
                 document.getElementById('modal-queue-info').innerHTML = `Você é o número <b>${queuePosition}</b> da fila para cortar com o <b>${barbeiroNome}</b>.`;
                 const queueModal = new bootstrap.Modal(document.getElementById('queueModal'));
                 queueModal.show();
-                
+
                 // Atualiza a tela de espera
                 clientNameDisplay.textContent = nome;
                 barberNameDisplay.textContent = barbeiroNome;
                 queuePositionDisplay.textContent = queuePosition;
-                
+
                 toggleSections(true);
 
             } else {
@@ -95,19 +95,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Rota: POST /remover-cliente
     btnSairFila.addEventListener('click', async () => {
         if (!currentClientId) return;
-        
+
         btnSairFila.disabled = true;
         btnSairFila.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saindo...';
-        
+
         try {
             const response = await fetch('http://localhost:3001/remover-cliente', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ clienteId: currentClientId })
             });
-            
+
             const data = await response.json();
-            
+
             if (response.ok) {
                 alert(data.message);
                 currentClientId = null;
