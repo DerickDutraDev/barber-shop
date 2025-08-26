@@ -1,0 +1,372 @@
+/* Definição de Variáveis CSS */
+:root {
+    --bg-color: #1a1a1a;
+    --card-color: #2c2c2c;
+    --text-color-dark: #ffffff;
+    --text-color-medium: #b4b4b4;
+    --gold-color: #d4af37; /* Cor principal dourada */
+    --gold-dark: #b8942b; /* Dourado mais escuro para hover */
+    --secondary-color: #2c2c2c; /* Fundo para itens não selecionados / popover */
+    --secondary-foreground: #ffffff; /* Texto em cima do secundário */
+    --border-color: #4a4a4a; /* Cor da borda geral */
+    --danger-color: #ff4d4d; /* Cor para ações destrutivas (sair da fila) */
+    --danger-hover: #e63939;
+    --success-color: #28a745; /* Cor para mensagens de sucesso (modal) */
+    --success-hover: #218838;
+    --input-bg: #2c2c2c; /* Fundo dos campos de input */
+    --input-border: #4a4a4a; /* Borda dos campos de input */
+    --shadow-light: rgba(212, 175, 55, 0.3); /* Sombra suave dourada */
+    --shadow-dark: rgba(0, 0, 0, 0.4); /* Sombra mais escura para cards */
+    --border-radius-lg: 1rem; /* Borda arredondada grande (para cards) */
+    --border-radius-sm: 0.5rem; /* Borda arredondada pequena (para botões, inputs) */
+}
+
+/* Base Body Styles */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color-dark);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex; /* Garante que o main ocupe o espaço */
+    flex-direction: column;
+}
+
+/* Background Gradient Effect (Subtle) */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top left, var(--secondary-color) 0%, transparent 40%),
+                radial-gradient(circle at bottom right, var(--secondary-color) 0%, transparent 40%);
+    opacity: 0.1;
+    z-index: -1;
+}
+
+/* Main Container */
+.container {
+    max-width: 600px;
+    flex-grow: 1; /* Permite que o container principal se expanda */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Centraliza o conteúdo verticalmente */
+}
+
+/* Header - Logo, Title, Subtitle */
+.custom-title {
+    color: var(--gold-color);
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+.custom-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-color-medium);
+}
+
+.logo-img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--gold-color);
+    box-shadow: 0 0 20px var(--shadow-light);
+    transition: transform 0.3s ease-in-out;
+    animation: pulse 2s infinite ease-in-out;
+}
+.logo-img:hover {
+    transform: scale(1.05);
+}
+
+/* Main Card and Effects */
+.custom-card {
+    background-color: var(--card-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+    padding: 1.5rem; /* Ajuste para o padding interno do card */
+}
+.custom-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Form and Inputs */
+.space-y-4 > * + * { margin-top: 1rem; }
+.space-y-2 > * + * { margin-top: 0.5rem; }
+.custom-title-access {
+    color: var(--text-color-dark);
+    font-weight: 500;
+    margin-bottom: 1.5rem; /* Espaçamento abaixo do título "Entre na Fila" */
+}
+.form-label {
+    color: var(--text-color-dark);
+    font-weight: 500;
+    margin-bottom: 0.5rem; /* Espaçamento entre label e input */
+    display: block; /* Garante que o label ocupe sua própria linha */
+}
+.custom-input {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color-dark);
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease-in-out;
+    padding: 0.75rem 1rem; /* Ajuste para o padding do input */
+    width: 100%; /* Garante que o input ocupe toda a largura disponível */
+}
+.custom-input::placeholder {
+    color: var(--text-color-medium);
+}
+.custom-input:focus {
+    border-color: var(--gold-color);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4); /* Sombra mais sutil no focus */
+    background-color: var(--card-color);
+    outline: none; /* Remove o outline padrão do navegador */
+}
+
+/* Barber Selection Buttons */
+.barber-item {
+    background-color: var(--input-bg);
+    border: 1px solid var(--input-border);
+    color: var(--text-color-dark);
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    border-radius: var(--border-radius-sm);
+    padding: 0.75rem 1rem; /* Ajuste de padding */
+    text-align: center; /* <--- AJUSTE AQUI: Centraliza o texto */
+    font-weight: 500;
+    width: 100%;
+    display: block; /* Garante que o botão se comporte como bloco e ocupe a largura */
+}
+.barber-item:hover {
+    background-color: var(--input-bg);
+    border-color: var(--gold-color);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.4);
+    transform: translateY(-2px);
+}
+.barber-item.selected {
+    border-color: var(--gold-color);
+    background-color: var(--gold-color); /* Fundo preenchido ao ser selecionado */
+    color: var(--card-color); /* Texto escuro no fundo dourado */
+    font-weight: bold;
+    box-shadow: 0 0 10px var(--shadow-light);
+}
+
+/* Main Action Button (Entrar na Fila) */
+.custom-btn {
+    background-color: var(--gold-color);
+    border-color: var(--gold-color);
+    color: var(--card-color); /* Cor do texto no botão dourado */
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease-in-out;
+    padding: 0.75rem 1rem; /* Ajuste de padding */
+    font-size: 1rem; /* Tamanho da fonte do botão */
+}
+.custom-btn:hover {
+    background-color: var(--gold-dark);
+    border-color: var(--gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+.custom-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--gold-color); /* Mantém a cor base, mas com opacidade */
+    border-color: var(--gold-color);
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* Danger Button (Sair da Fila) */
+.custom-btn-danger {
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    color: white;
+    font-weight: 600;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease-in-out;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+.custom-btn-danger:hover {
+    background-color: var(--danger-hover);
+    border-color: var(--danger-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 77, 77, 0.3);
+}
+.custom-btn-danger:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: var(--danger-color);
+    border-color: var(--danger-color);
+    transform: none;
+    box-shadow: none;
+}
+
+
+/* Back Button (Fixed on Top Left) */
+.btn-back-app {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: var(--text-color-medium);
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease-in-out;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--border-radius-sm);
+    padding: 0.5rem 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    z-index: 10; /* Garante que ele fique acima de outros elementos */
+}
+.btn-back-app:hover,
+.btn-back-app:focus,
+.btn-back-app:active {
+    color: var(--gold-color);
+    background-color: rgba(212, 175, 55, 0.05);
+    border-color: var(--gold-color);
+    text-decoration: none;
+}
+
+/* Queue Response Section */
+#queue-response {
+    text-align: center; /* Centraliza o texto de "Sua Posição" */
+}
+#queue-response .custom-title-access {
+    margin-bottom: 1rem;
+}
+.queue-info-item {
+    font-size: 1.1rem; /* Um pouco maior para as informações da fila */
+    margin-bottom: 0.5rem;
+}
+.queue-info-item span.font-semibold {
+    color: var(--text-color-dark); /* Garante visibilidade */
+}
+.text-3xl {
+    font-size: 2.25rem; /* Ajuste para o tamanho da fonte da posição */
+    line-height: 1;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
+}
+.text-muted-foreground {
+    color: var(--text-color-medium);
+    font-size: 0.9rem;
+}
+
+/* Modal Styles */
+.modal-content.bg-dark-custom {
+    background-color: var(--card-color);
+    border-radius: var(--border-radius-lg);
+    border: none;
+}
+.modal-header {
+    border-bottom: 1px solid var(--border-color); /* Borda sutil no header do modal */
+    padding: 1rem 1.5rem;
+}
+.modal-header .btn-close {
+    filter: invert(1); /* Deixa o ícone do X branco */
+    background-color: transparent; /* Remove o fundo do botão de fechar */
+    border: none;
+    font-size: 1.25rem; /* Aumenta um pouco o tamanho do X */
+}
+.modal-title {
+    color: var(--text-color-dark);
+    font-weight: 600;
+}
+.modal-body {
+    padding: 1.5rem;
+}
+.modal-body .fas.fa-check-circle {
+    color: var(--success-color); /* Usa a cor de sucesso para o ícone */
+    font-size: 3.5rem; /* Ícone grande */
+}
+.modal-body p {
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    color: var(--text-color-medium);
+}
+.modal-body p#modal-queue-info {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: var(--gold-color);
+    margin-top: 1rem;
+}
+.modal-footer {
+    border-top: 1px solid var(--border-color); /* Borda sutil no footer do modal */
+    padding: 1rem 1.5rem;
+    justify-content: center;
+}
+.modal-footer .custom-btn {
+    width: 100%;
+}
+
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px var(--shadow-light); }
+    50% { transform: scale(1.03); box-shadow: 0 0 35px var(--gold-color); }
+    100% { transform: scale(1); box-shadow: 0 0 20px var(--shadow-light); }
+}
+
+/* Gold Glow Effect for interactive elements */
+.gold-glow {
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    transition: box-shadow 0.3s ease-in-out;
+}
+.gold-glow:hover {
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.5);
+}
+
+/* Button Press Effect (Tactile Feedback) */
+.button-press:active {
+    transform: scale(0.98);
+    box-shadow: 0 0 10px rgba(212, 175, 55, 0.4) inset;
+}
+
+/* Input Focus Effect */
+.input-focus-effect:focus {
+    box-shadow: 0 0 0 2px var(--gold-color);
+    border-color: var(--gold-color);
+}
+
+/* Card Hover Effect */
+.card-hover-effect {
+    transition: all 0.2s ease-in-out;
+}
+.card-hover-effect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Media Queries for Responsiveness */
+@media (max-width: 576px) {
+    .container { padding: 1rem; }
+    .custom-title { font-size: 1.75rem; } /* Levemente menor em telas pequenas */
+    .logo-img { width: 100px; height: 100px; }
+    .custom-card { padding: 1.25rem; } /* Menor padding em telas pequenas */
+    .btn-back-app { top: 10px; left: 10px; }
+    .custom-btn, .custom-btn-danger, .barber-item {
+        padding: 0.65rem 0.8rem; /* Ajuste de padding para botões */
+        font-size: 0.95rem;
+    }
+}
+@media (min-width: 577px) and (max-width: 992px) {
+    .container { max-width: 600px; }
+}
+@media (min-width: 993px) {
+    .container { max-width: 600px; }
+}
