@@ -3,8 +3,8 @@
     --bg-color: #121212;
     --card-color: #1e1e1e;
     --text-color-dark: #ffffff;
-    --text-color-medium: #b0b0b0; /* Cor para texto secundário (ex: "Cliente:", "Barbeiro:") */
-    --text-color-highlight: #f0f0f0; /* Nova cor para nomes (Pedro, Yago) */
+    --text-color-medium: #b0b0b0;
+    --text-color-highlight: #f0f0f0;
     --gold-color: #d4af37;
     --gold-dark: #b8942b;
     --secondary-color: #2c2c2c;
@@ -105,7 +105,7 @@ body::before {
 .custom-input {
     background-color: var(--card-color);
     border: 1px solid var(--border-color);
-    color: var(--text-color-dark);
+    color: var(--text-color-dark) !important; /* CORREÇÃO AQUI */
     border-radius: var(--border-radius-sm);
     transition: all 0.2s ease-in-out;
     padding: 0.75rem 1rem;
@@ -233,9 +233,15 @@ body::before {
     text-align: center;
 }
 
+#queue-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem; /* Espaçamento entre os itens */
+}
+
 .queue-info-item {
     font-size: 1.1rem;
-    margin-bottom: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -262,14 +268,19 @@ body::before {
     padding: 1rem;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 /* Estilo para a frase de espera dentro da box */
 #queue-message {
     font-size: 0.95rem;
-    color: var(--text-color-medium);
-    margin-top: 1rem;
-    font-style: italic; /* Adiciona um toque elegante */
+    color: var(--text-color-dark); /* CORREÇÃO AQUI */
+    margin-top: 0;
+    font-style: italic;
 }
 
 /* Modal Styles */
