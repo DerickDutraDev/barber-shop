@@ -17,9 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     let queueCheckInterval = null;
 
     const barbers = {
-        junior: 'Barbeiro Junior',
-        yago: 'Barbeiro Yago',
-        reine: 'Barbeiro Reine'
+        junior: 'Junior',
+        yago: 'Yago',
+        reine: 'Reine'
     };
 
     function toggleSections(showQueueResponse = false) {
@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             barberItems.forEach(i => i.classList.remove('selected'));
             item.classList.add('selected');
             selectedBarberInput.value = item.getAttribute('data-barber');
-            // Remove a mensagem de erro do barbeiro ao selecionar um
             barbeiroErrorDiv.textContent = '';
         });
     });
@@ -48,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const nome = nomeClienteInput.value.trim();
         const barbeiroId = selectedBarberInput.value;
 
-        // Validação personalizada
         let isValid = true;
         if (!nome) {
             nomeClienteInput.classList.add('is-invalid');
@@ -74,13 +72,13 @@ document.addEventListener('DOMContentLoaded', () => {
         joinQueueBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Entrando na fila...';
 
         try {
-            const response = await fetch('http://localhost:3001/api/join-queue', {
+            // CORREÇÃO: Endpoint do cliente atualizado
+            const response = await fetch('http://localhost:3001/api/public/join-queue', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: nome, barber: barbeiroId.toLowerCase() })
             });
             
-            // Tratamento de erro mais robusto para respostas que não são JSON
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
@@ -92,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const queuePosition = data.position;
             const barbeiroNome = barbers[barbeiroId.toLowerCase()];
             
-            document.getElementById('modal-queue-info').innerHTML = `Você é o número <b>${queuePosition}</b> da fila para cortar com o <b>${barbeiroNome}</b>.`;
+            document.getElementById('modal-queue-info').innerHTML = `Você é o número <b>${queuePosition}</b> da fila para cortar com o <b>Barbeiro ${barbeiroNome}</b>.`;
             const queueModal = new bootstrap.Modal(document.getElementById('queueModal'));
             queueModal.show();
 
@@ -120,7 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSairFila.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saindo...';
 
         try {
-            const response = await fetch('http://localhost:3001/api/leave-queue', {
+            // CORREÇÃO: Endpoint do cliente atualizado
+            const response = await fetch('http://localhost:3001/api/public/leave-queue', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ clientId: currentClientId })
@@ -150,7 +149,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('http://localhost:3001/api/queues');
+            // CORREÇÃO: Endpoint público de visualização da fila
+            const response = await fetch('http://localhost:3001/api/public/queues');
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
