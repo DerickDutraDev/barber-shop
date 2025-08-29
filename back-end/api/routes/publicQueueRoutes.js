@@ -6,15 +6,17 @@ module.exports = (supabaseAdmin) => {
 
     // Adicionar cliente na fila
     router.post('/join-queue', async (req, res) => {
+        console.log("Rota POST /join-queue acionada.");
         const { name, barber } = req.body;
         const clientId = crypto.randomUUID();
 
         if (!name || !barber) {
+            console.log("Dados ausentes. Retornando 400.");
             return res.status(400).json({ error: 'Nome e barbeiro são obrigatórios.' });
         }
 
         try {
-            // Inserir cliente usando supabaseAdmin (service role)
+            console.log("Tentando inserir cliente no Supabase.");
             const { data: inserted, error: insertError } = await supabaseAdmin
                 .from('clients')
                 .insert([{
@@ -27,14 +29,14 @@ module.exports = (supabaseAdmin) => {
                 .select();
 
             if (insertError) {
-                console.error('Erro detalhado do Supabase:', insertError);
+                console.error('Erro detalhado do Supabase na inserção:', insertError);
                 return res.status(500).json({ 
                     error: 'Erro ao adicionar cliente na fila.', 
                     details: insertError 
                 });
             }
 
-            // Buscar todos os clientes esperando para esse barbeiro, ordenados pelo timestamp
+            console.log("Cliente inserido com sucesso. Buscando a posição na fila.");
             const { data: rows, error } = await supabaseAdmin
                 .from('clients')
                 .select('id')
@@ -48,7 +50,8 @@ module.exports = (supabaseAdmin) => {
             }
 
             const position = rows.findIndex(row => row.id === clientId) + 1;
-
+            console.log("Posição na fila encontrada:", position);
+            
             // Remoção automática só após insert confirmado
             setTimeout(async () => {
                 try {
@@ -66,17 +69,22 @@ module.exports = (supabaseAdmin) => {
             });
 
         } catch (err) {
-            console.error('Erro ao entrar na fila (catch):', err);
+            console.error('Erro inesperado na rota /join-queue:', err);
             res.status(500).json({ error: 'Erro ao adicionar cliente na fila.', details: err });
         }
     });
 
     // Remover cliente da fila manualmente
     router.post('/leave-queue', async (req, res) => {
+        console.log("Rota POST /leave-queue acionada.");
         const { clientId } = req.body;
-        if (!clientId) return res.status(400).json({ error: 'ID do cliente é obrigatório.' });
+        if (!clientId) {
+            console.log("ID do cliente ausente.");
+            return res.status(400).json({ error: 'ID do cliente é obrigatório.' });
+        }
 
         try {
+            console.log("Tentando remover cliente do Supabase.");
             const { error } = await supabaseAdmin
                 .from('clients')
                 .delete()
@@ -87,20 +95,24 @@ module.exports = (supabaseAdmin) => {
                 return res.status(500).json({ error: 'Erro ao remover cliente da fila.', details: error });
             }
 
+            console.log("Cliente removido com sucesso.");
             res.status(200).json({ message: 'Cliente removido da fila.' });
         } catch (err) {
-            console.error('Erro ao remover cliente (catch):', err);
+            console.error('Erro inesperado na rota /leave-queue:', err);
             res.status(500).json({ error: 'Erro ao remover cliente da fila.', details: err });
         }
     });
 
     // Obter a fila completa (público)
     router.get('/queues', async (req, res) => {
+        console.log("Rota GET /queues acionada.");
         const barbers = ['junior', 'yago', 'reine'];
         const queues = { junior: [], yago: [], reine: [] };
 
         try {
+            console.log("Buscando todas as filas...");
             await Promise.all(barbers.map(async barber => {
+                console.log(`Buscando fila do barbeiro ${barber}.`);
                 const { data, error } = await supabaseAdmin
                     .from('clients')
                     .select('id, name')
@@ -112,17 +124,19 @@ module.exports = (supabaseAdmin) => {
                     console.error(`Erro ao buscar fila do barbeiro ${barber}:`, error);
                     queues[barber] = [];
                 } else {
+                    console.log(`Fila de ${barber} encontrada:`, data.length, "clientes.");
                     queues[barber] = data.map(row => ({
                         clientId: row.id,
                         name: row.name
                     }));
                 }
             }));
-
+            
+            console.log("Busca por todas as filas concluída.");
             res.status(200).json(queues);
 
         } catch (err) {
-            console.error('Erro ao buscar filas (catch):', err);
+            console.error('Erro inesperado na rota /queues:', err);
             res.status(500).json({ error: 'Erro ao buscar filas.', details: err });
         }
     });
