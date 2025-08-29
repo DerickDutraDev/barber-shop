@@ -8,10 +8,10 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 // Importações dos arquivos de rotas e middleware
-const createAuthRoutes = require('../routes/authRoutes');
-const createPublicQueueRoutes = require('../routes/publicQueueRoutes');
-const createBarberApiRoutes = require('../routes/barberApiRoutes');
-const authenticateToken = require('../middleware/authMiddleware');
+const createAuthRoutes = require('./routes/authRoutes');
+const createPublicQueueRoutes = require('./routes/publicQueueRoutes');
+const createBarberApiRoutes = require('./routes/barberApiRoutes');
+const authenticateToken = require('./middleware/authMiddleware');
 
 console.log("Iniciando a API...");
 
