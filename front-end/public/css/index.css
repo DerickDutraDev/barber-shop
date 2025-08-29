@@ -176,6 +176,25 @@ body::before {
     text-decoration: underline;
 }
 
+/* Rodapé de crédito */
+.footer-credit {
+    font-size: 0.8rem;
+    color: var(--text-color-medium);
+    background: transparent;
+}
+
+.footer-credit a {
+    color: var(--gold-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-credit a:hover {
+    color: var(--gold-dark);
+    text-decoration: underline;
+}
+
+
 /* Animações Keyframes */
 @keyframes fadeIn {
     from {
