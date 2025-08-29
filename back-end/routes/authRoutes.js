@@ -8,21 +8,30 @@ const REFRESH_SECRET = process.env.REFRESH_SECRET;
 const DEFAULT_USERNAME = process.env.DEFAULT_USERNAME;
 const DEFAULT_PASSWORD = process.env.DEFAULT_PASSWORD;
 
-// Refresh tokens em memória (em produção, usar DB)
+// Refresh tokens em memória (em produção, pode usar DB)
 let refreshTokens = [];
 
-module.exports = (db) => {
+module.exports = (supabase) => {
 
     // LOGIN
-    router.post('/login', (req, res) => {
+    router.post('/login', async (req, res) => {
         const { username, password } = req.body;
         if (!username || !password) return res.status(400).json({ error: 'Usuário e senha obrigatórios.' });
 
-        db.get(`SELECT * FROM barbers WHERE username = ?`, [username], async (err, user) => {
-            if (err) return res.status(500).json({ error: 'Erro interno.' });
+        try {
+            // Busca barber no Supabase
+            const { data: user, error } = await supabase
+                .from('barbers')
+                .select('*')
+                .eq('username', username)
+                .single();
+
+            if (error && error.code !== 'PGRST116') {
+                return res.status(500).json({ error: 'Erro interno.' });
+            }
 
             if (!user) {
-                // Se não existir no DB, verifica credenciais do .env
+                // Se não existir no Supabase, verifica credenciais do .env
                 if (username === DEFAULT_USERNAME && password === DEFAULT_PASSWORD) {
                     return createTokensAndRespond(username, res);
                 }
@@ -33,7 +42,11 @@ module.exports = (db) => {
             if (!match) return res.status(401).json({ error: 'Usuário ou senha inválidos.' });
 
             createTokensAndRespond(user.username, res);
-        });
+
+        } catch (err) {
+            console.error(err);
+            res.status(500).json({ error: 'Erro interno.' });
+        }
     });
 
     // REFRESH TOKEN
