@@ -1,0 +1,100 @@
+/* Importa o CSS principal para reutilizar estilos */
+@import url('index.css');
+
+/* Estilos Específicos para a Página de Login */
+
+/* Card de Login: Adiciona um efeito de hover */
+.card-hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px var(--shadow-dark);
+}
+
+/* Título de Acesso Exclusivo */
+.custom-title-access {
+    font-size: 1.25rem;
+    color: var(--gold-color);
+    font-weight: 600;
+}
+
+/* Estiliza o input para que ele se encaixe perfeitamente no container */
+.input-group {
+    border: 1px solid var(--input-border);
+    border-radius: var(--border-radius-sm);
+    background-color: var(--input-bg);
+    transition: all 0.2s ease-in-out;
+}
+
+.input-group:focus-within {
+    border-color: var(--gold-color);
+    box-shadow: 0 0 0 0.25rem var(--shadow-light);
+}
+
+/* Torna o background dos ícones transparente e ajusta as cores */
+.input-group-text {
+    background-color: transparent !important;
+    border: none;
+    color: var(--text-color-dark); /* Corrigido para ser mais visível */
+}
+
+/* Garante que o input preencha o espaço corretamente e combine com o ícone */
+.form-control.custom-input {
+    background-color: transparent;
+    border: none;
+    color: var(--text-color-dark);
+    padding-left: 0;
+}
+
+.form-control.custom-input::placeholder {
+    color: var(--text-color-medium);
+}
+
+.form-control.custom-input:focus {
+    box-shadow: none;
+}
+
+/* Estilo para o botão de voltar */
+.btn-back-app {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    color: var(--text-color-medium);
+    font-size: 1rem;
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+}
+
+.btn-back-app:hover {
+    color: var(--gold-color);
+}
+
+/* Botão de Login com efeito de clique */
+.button-press:active {
+    transform: translateY(2px);
+    box-shadow: none !important;
+}
+
+/* Media Queries para manter a responsividade */
+@media (max-width: 576px) {
+    .btn-back-app {
+        position: relative;
+        top: auto;
+        left: auto;
+        display: block;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
+    }
+
+    .container {
+        padding: 1rem;
+    }
+
+    .custom-title {
+        font-size: 1.5rem;
+    }
+}
+
+/* Seletor específico para ajustar o espaçamento dos inputs */
+.input-group .form-control {
+    padding-left: 10px; /* Ajusta o padding para o texto não ficar cortado */
+}

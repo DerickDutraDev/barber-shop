@@ -213,11 +213,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                const response = await fetchWithAuth('http://localhost:3001/api/barber/adicionar-cliente-manual', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nome: clientName, barbeiro: barber })
-                });
+                    const response = await fetchWithAuth('http://localhost:3001/api/barber/adicionar-cliente-manual', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nome: clientName, barber }) // <-- envia barber, não barbeiro
+                    });
+
 
                 if (!response.ok) {
                     const errorText = await response.text();

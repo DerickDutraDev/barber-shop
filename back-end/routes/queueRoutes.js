@@ -81,33 +81,35 @@ module.exports = (supabase) => {
     });
 
     // Adicionar cliente manualmente (dashboard)
-    router.post('/adicionar-cliente-manual', async (req, res) => {
-        const { nome, barbeiro } = req.body;
-        const clientId = crypto.randomUUID();
+        router.post('/adicionar-cliente-manual', async (req, res) => {
+            const { nome, barber } = req.body;
+            const clientId = crypto.randomUUID();
 
-        if (!nome || !barbeiro) {
-            return res.status(400).json({ error: 'Nome e barbeiro são obrigatórios.' });
-        }
+            if (!nome || !barber) {
+                return res.status(400).json({ error: 'Nome e barbeiro são obrigatórios.' });
+            }
 
-        try {
-            const { data, error } = await supabase
-                .from('clients')
-                .insert([{ id: clientId, name: nome, barber: barbeiro.toLowerCase() }])
-                .select()
-                .single();
+            try {
+                const { data, error } = await supabase
+                    .from('clients')
+                    .insert([{ id: clientId, name: nome, barber: barber.toLowerCase() }]) // <-- usa barber
+                    .select()
+                    .single();
 
-            if (error) throw error;
+                if (error) throw error;
 
-            res.status(201).json({
-                message: 'Cliente adicionado manualmente com sucesso!',
-                clientId: data.id
-            });
+                res.status(201).json({
+                    message: 'Cliente adicionado manualmente com sucesso!',
+                    clientId: data.id
+                });
 
-        } catch (err) {
-            console.error(err);
-            res.status(500).json({ error: 'Erro ao adicionar cliente manualmente.' });
-        }
-    });
+            } catch (err) {
+                console.error(err);
+                res.status(500).json({ error: 'Erro ao adicionar cliente manualmente.' });
+            }
+        });
+
+
 
     // Obter fila completa (dashboard)
     router.get('/queues', async (req, res) => {
