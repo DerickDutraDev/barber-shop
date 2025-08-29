@@ -33,5 +33,5 @@ app.use('/api/barber', authenticateToken, createBarberApiRoutes(supabaseAdmin));
 
 console.log("Rotas configuradas.");
 
-module.exports.handler = serverless(app);
+module.exports = serverless(app);
 console.log("Servidor serverless exportado.");
