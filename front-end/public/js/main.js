@@ -1,3 +1,5 @@
+const BASE_URL = "https://barber-f3ak5r7xb-derickdev2005-1479s-projects.vercel.app/api";
+
 document.addEventListener('DOMContentLoaded', () => {
     const clienteForm = document.getElementById('cliente-form');
     const nomeClienteInput = document.getElementById('nome-cliente');
@@ -23,13 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function toggleSections(showQueueResponse = false) {
-        if (showQueueResponse) {
-            clienteFormSection.style.display = 'none';
-            queueResponseSection.style.display = 'block';
-        } else {
-            clienteFormSection.style.display = 'block';
-            queueResponseSection.style.display = 'none';
-        }
+        clienteFormSection.style.display = showQueueResponse ? 'none' : 'block';
+        queueResponseSection.style.display = showQueueResponse ? 'block' : 'none';
     }
 
     barberItems.forEach(item => {
@@ -64,16 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
             barbeiroErrorDiv.textContent = '';
         }
 
-        if (!isValid) {
-            return;
-        }
+        if (!isValid) return;
 
         joinQueueBtn.disabled = true;
         joinQueueBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Entrando na fila...';
 
         try {
-            // CORREÇÃO: Endpoint do cliente atualizado
-            const response = await fetch('http://localhost:3001/api/public/join-queue', {
+            const response = await fetch(`${BASE_URL}/public/join-queue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: nome, barber: barbeiroId.toLowerCase() })
@@ -85,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            
             currentClientId = data.clientId;
             const queuePosition = data.position;
             const barbeiroNome = barbers[barbeiroId.toLowerCase()];
@@ -99,7 +92,6 @@ document.addEventListener('DOMContentLoaded', () => {
             queuePositionDisplay.textContent = queuePosition;
 
             toggleSections(true);
-
             startQueueCheck();
 
         } catch (error) {
@@ -118,8 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSairFila.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> Saindo...';
 
         try {
-            // CORREÇÃO: Endpoint do cliente atualizado
-            const response = await fetch('http://localhost:3001/api/public/leave-queue', {
+            const response = await fetch(`${BASE_URL}/public/leave-queue`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ clientId: currentClientId })
@@ -149,11 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            // CORREÇÃO: Endpoint público de visualização da fila
-            const response = await fetch('http://localhost:3001/api/public/queues');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            const response = await fetch(`${BASE_URL}/public/queues`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             const queues = await response.json();
             
             let myPosition = null;

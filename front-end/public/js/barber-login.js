@@ -1,3 +1,5 @@
+const BASE_URL = "https://barber-f3ak5r7xb-derickdev2005-1479s-projects.vercel.app/api";
+
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('barber-login-form');
     const usernameInput = document.getElementById('barber-username');
@@ -22,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loginError.style.display = 'none';
 
         try {
-            const response = await fetch('http://localhost:3001/api/auth/login', {
+            const response = await fetch(`${BASE_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password })
@@ -31,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
 
             if (response.ok) {
-                // CORRIGIDO: usar accessToken e refreshToken do backend
                 localStorage.setItem('barber-access-token', data.accessToken);
                 localStorage.setItem('barber-refresh-token', data.refreshToken);
 

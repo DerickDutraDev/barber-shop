@@ -1,3 +1,5 @@
+const BASE_URL = "https://barber-f3ak5r7xb-derickdev2005-1479s-projects.vercel.app/api";
+
 document.addEventListener('DOMContentLoaded', () => {
     const accessTokenKey = 'barber-access-token';
     const refreshTokenKey = 'barber-refresh-token';
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const refreshResp = await fetch('http://localhost:3001/api/auth/refresh', {
+            const refreshResp = await fetch(`${BASE_URL}/auth/refresh`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refreshToken })
@@ -60,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response;
     }
 
-    // ----------- ELEMENTOS -----------
+    // ----------- ELEMENTOS ----------- //
     const barbers = ['Junior', 'Yago', 'Reine'];
     const btnLogout = document.getElementById('btn-logout');
     const addClientForm = document.getElementById('add-client-form');
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const barberModalErrorDiv = document.getElementById('barber-modal-error');
     const timeElement = document.getElementById('current-time');
 
-    // ----------- ATUALIZAÇÃO DO RELÓGIO -----------
+    // ----------- ATUALIZAÇÃO DO RELÓGIO ----------- //
     function updateTime() {
         const now = new Date();
         if (timeElement) {
@@ -87,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentQueues = { junior: [], yago: [], reine: [] };
 
-    // ----------- RENDER FILAS -----------
+    // ----------- RENDER FILAS ----------- //
     function renderQueues(data) {
         barbers.forEach(barber => {
             const queueList = document.getElementById(`queue-${barber.toLowerCase()}`);
@@ -146,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----------- ATENDER CLIENTE -----------
+    // ----------- ATENDER CLIENTE ----------- //
     async function handleServeClient(event) {
         const button = event.target.closest('.btn-atender');
         if (!button) return;
@@ -158,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (listItem) listItem.remove();
 
         try {
-            const response = await fetchWithAuth('http://localhost:3001/api/barber/serve-client', {
+            const response = await fetchWithAuth(`${BASE_URL}/barber/serve-client`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ clientId })
@@ -169,10 +171,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ----------- BUSCAR FILAS -----------
+    // ----------- BUSCAR FILAS ----------- //
     async function fetchQueues() {
         try {
-            const response = await fetchWithAuth('http://localhost:3001/api/barber/queues', { headers: { 'Content-Type': 'application/json' } });
+            const response = await fetchWithAuth(`${BASE_URL}/barber/queues`, { headers: { 'Content-Type': 'application/json' } });
             if (!response.ok) throw new Error('Erro ao buscar filas');
             const data = await response.json();
             renderQueues(data);
@@ -182,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // ----------- SELEÇÃO DO BARBEIRO NO MODAL -----------
+    // ----------- SELEÇÃO DO BARBEIRO NO MODAL ----------- //
     barberItemsModal.forEach(button => {
         button.addEventListener('click', () => {
             barberItemsModal.forEach(btn => btn.classList.remove('active'));
@@ -192,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // ----------- SUBMIT DO FORMULÁRIO DE ADIÇÃO DE CLIENTE -----------
+    // ----------- SUBMIT DO FORMULÁRIO DE ADIÇÃO DE CLIENTE ----------- //
     if (addClientForm) {
         addClientForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -213,12 +215,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                    const response = await fetchWithAuth('http://localhost:3001/api/barber/adicionar-cliente-manual', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ nome: clientName, barber }) // <-- envia barber, não barbeiro
-                    });
-
+                const response = await fetchWithAuth(`${BASE_URL}/barber/adicionar-cliente-manual`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: clientName, barber })
+                });
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -230,11 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 selectedBarberModalInput.value = '';
                 barberItemsModal.forEach(btn => btn.classList.remove('active'));
 
-                // Mostrar modal de sucesso e auto-hide
                 successModal.show();
-                setTimeout(() => {
-                    successModal.hide();
-                }, 1000); // 780 segundos = 13 minutos
+                setTimeout(() => { successModal.hide(); }, 1000);
 
                 fetchQueues();
             } catch (error) {
@@ -243,10 +241,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ----------- LOGOUT -----------
+    // ----------- LOGOUT ----------- //
     if (btnLogout) btnLogout.addEventListener('click', handleLogout);
 
-    // ----------- LOOP DAS FILAS -----------
+    // ----------- LOOP DAS FILAS ----------- //
     fetchQueues();
     setInterval(fetchQueues, 5000);
 });
