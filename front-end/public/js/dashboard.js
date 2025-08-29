@@ -25,7 +25,6 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/barber-login.html';
     }
 
-    // Função para fazer fetch com refresh automático
     async function fetchWithAuth(url, options = {}) {
         let token = getAccessToken();
         if (!options.headers) options.headers = {};
@@ -34,14 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let response = await fetch(url, options);
 
         if (response.status === 401 || response.status === 403) {
-            // Tentar refresh token
             const refreshToken = getRefreshToken();
             if (!refreshToken) {
                 handleLogout();
                 return;
             }
 
-            const refreshResp = await fetch('/api/auth/refresh', {
+            const refreshResp = await fetch('http://localhost:3001/api/auth/refresh', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ refreshToken })
@@ -55,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await refreshResp.json();
             setTokens(data.accessToken, data.refreshToken);
 
-            // Refaz a requisição original com o novo token
             options.headers['Authorization'] = `Bearer ${data.accessToken}`;
             response = await fetch(url, options);
         }
@@ -63,14 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return response;
     }
 
-    // Função auxiliar para criar cabeçalhos com token
-    const getHeaders = () => ({
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAccessToken()}`
-    });
-
-    // ----------- RESTO DO CÓDIGO EXISTENTE -----------
-
+    // ----------- ELEMENTOS -----------
     const barbers = ['Junior', 'Yago', 'Reine'];
     const btnLogout = document.getElementById('btn-logout');
     const addClientForm = document.getElementById('add-client-form');
@@ -85,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const barberModalErrorDiv = document.getElementById('barber-modal-error');
     const timeElement = document.getElementById('current-time');
 
-    // Atualiza hora
+    // ----------- ATUALIZAÇÃO DO RELÓGIO -----------
     function updateTime() {
         const now = new Date();
         if (timeElement) {
@@ -97,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentQueues = { junior: [], yago: [], reine: [] };
 
-    // Renderizar filas
+    // ----------- RENDER FILAS -----------
     function renderQueues(data) {
         barbers.forEach(barber => {
             const queueList = document.getElementById(`queue-${barber.toLowerCase()}`);
@@ -119,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             newQueue.forEach((client, index) => {
                 if (!oldClientIds.has(client.clientId)) {
                     const newHtml = `
-                        <li class="list-group-item d-flex justify-content-between align-items-center animate-fade-in">
+                        <li class="list-group-item d-flex justify-content-between align-items-center animate-fade-in" data-client-id="${client.clientId}">
                             <div class="client-info">
                                 <span class="queue-number">${index + 1}.</span>
                                 <span>${client.name}</span>
@@ -133,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Atualiza números da fila
             const listItems = queueList.querySelectorAll('.list-group-item:not(.empty-queue)');
             if (listItems.length === 0) {
                 if (!queueList.querySelector('.empty-queue')) {
@@ -157,13 +146,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // ----------- ATENDER CLIENTE -----------
     async function handleServeClient(event) {
         const button = event.target.closest('.btn-atender');
         if (!button) return;
 
         const clientId = button.getAttribute('data-client-id');
-        const barberName = button.getAttribute('data-barber');
-        if (!clientId || !barberName) return;
+        if (!clientId) return;
 
         const listItem = button.closest('li.list-group-item');
         if (listItem) listItem.remove();
@@ -180,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ----------- BUSCAR FILAS -----------
     async function fetchQueues() {
         try {
             const response = await fetchWithAuth('http://localhost:3001/api/barber/queues', { headers: { 'Content-Type': 'application/json' } });
@@ -192,8 +182,71 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ----------- SELEÇÃO DO BARBEIRO NO MODAL -----------
+    barberItemsModal.forEach(button => {
+        button.addEventListener('click', () => {
+            barberItemsModal.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+            selectedBarberModalInput.value = button.getAttribute('data-barber');
+            barberModalErrorDiv.textContent = '';
+        });
+    });
+
+    // ----------- SUBMIT DO FORMULÁRIO DE ADIÇÃO DE CLIENTE -----------
+    if (addClientForm) {
+        addClientForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const clientName = clientNameInput.value.trim();
+            const barber = selectedBarberModalInput.value;
+
+            clientNameErrorDiv.textContent = '';
+            barberModalErrorDiv.textContent = '';
+
+            if (!clientName) {
+                clientNameErrorDiv.textContent = 'Digite o nome do cliente';
+                return;
+            }
+            if (!barber) {
+                barberModalErrorDiv.textContent = 'Escolha um barbeiro';
+                return;
+            }
+
+            try {
+                    const response = await fetchWithAuth('http://localhost:3001/api/barber/adicionar-cliente-manual', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ nome: clientName, barber }) // <-- envia barber, não barbeiro
+                    });
+
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+
+                addClientModal.hide();
+                clientNameInput.value = '';
+                selectedBarberModalInput.value = '';
+                barberItemsModal.forEach(btn => btn.classList.remove('active'));
+
+                // Mostrar modal de sucesso e auto-hide
+                successModal.show();
+                setTimeout(() => {
+                    successModal.hide();
+                }, 1000); // 780 segundos = 13 minutos
+
+                fetchQueues();
+            } catch (error) {
+                console.error('Erro ao adicionar cliente:', error);
+            }
+        });
+    }
+
+    // ----------- LOGOUT -----------
     if (btnLogout) btnLogout.addEventListener('click', handleLogout);
 
+    // ----------- LOOP DAS FILAS -----------
     fetchQueues();
     setInterval(fetchQueues, 5000);
 });

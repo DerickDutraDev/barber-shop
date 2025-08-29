@@ -2,79 +2,80 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 
-module.exports = (db) => {
+module.exports = (supabase) => {
 
-    // Endpoint para o barbeiro atender um cliente
-    router.post('/serve-client', (req, res) => {
+    // Atender um cliente (remove da fila)
+    router.post('/serve-client', async (req, res) => {
         const { clientId } = req.body;
-        if (!clientId) {
-            return res.status(400).json({ error: 'ID do cliente é obrigatório.' });
-        }
-        db.run(`DELETE FROM clients WHERE id = ?`, [clientId], function (err) {
-            if (err) {
-                return res.status(500).json({ error: 'Erro ao atender cliente.' });
-            }
+        if (!clientId) return res.status(400).json({ error: 'ID do cliente é obrigatório.' });
+
+        try {
+            const { error } = await supabase
+                .from('clients')
+                .delete()
+                .eq('id', clientId);
+
+            if (error) throw error;
+
             res.status(200).json({ message: 'Cliente atendido com sucesso.' });
-        });
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao atender cliente.' });
+        }
     });
-    
-    // Endpoint para o barbeiro adicionar um cliente manualmente
-    router.post('/adicionar-cliente-manual', (req, res) => {
-        const { nome, barbeiro } = req.body;
+
+    // Adicionar cliente manualmente
+    router.post('/adicionar-cliente-manual', async (req, res) => {
+        const { nome, barber } = req.body;
         const clientId = crypto.randomUUID();
-        if (!nome || !barbeiro) {
+
+        if (!nome || !barber) {
             return res.status(400).json({ error: 'Nome e barbeiro são obrigatórios.' });
         }
-        
-        const barbeiroLowerCase = barbeiro.toLowerCase();
 
-        db.run(
-            `INSERT INTO clients (id, name, barber) VALUES (?, ?, ?)`,
-            [clientId, nome, barbeiroLowerCase],
-            function (err) {
-                if (err) {
-                    return res.status(500).json({ error: 'Erro ao adicionar cliente na fila.' });
-                }
-                res.status(201).json({
-                    message: 'Cliente adicionado manualmente com sucesso!',
-                    clientId
-                });
-            }
-        );
+        try {
+            const { data, error } = await supabase
+                .from('clients')
+                .insert([{ id: clientId, name: nome, barber: barber.toLowerCase() }])
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            res.status(201).json({
+                message: 'Cliente adicionado manualmente com sucesso!',
+                clientId: data.id
+            });
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao adicionar cliente na fila.' });
+        }
     });
-    
-    // Endpoint para obter a fila completa para o dashboard
-    router.get('/queues', (req, res) => {
+
+    // Obter fila completa
+    router.get('/queues', async (req, res) => {
         const barbers = ['junior', 'yago', 'reine'];
         const queues = { junior: [], yago: [], reine: [] };
-        let completed = 0;
-    
-        const checkCompletion = () => {
-            completed++;
-            if (completed === barbers.length) {
-                res.status(200).json(queues);
-            }
-        };
-    
-        barbers.forEach(barber => {
-            db.all(
-                `SELECT id, name FROM clients WHERE barber = ? ORDER BY timestamp ASC`,
-                [barber],
-                (err, rows) => {
-                    if (err) {
-                        console.error(`Erro ao buscar fila do barbeiro ${barber}:`, err);
-                        queues[barber] = [];
-                    } else {
-                        queues[barber] = rows.map(row => ({
-                            clientId: row.id,
-                            name: row.name
-                        }));
-                    }
-                    checkCompletion();
+
+        try {
+            await Promise.all(barbers.map(async barber => {
+                const { data, error } = await supabase
+                    .from('clients')
+                    .select('id, name')
+                    .eq('barber', barber)
+                    .order('timestamp', { ascending: true });
+
+                if (error) {
+                    console.error(`Erro ao buscar fila do barbeiro ${barber}:`, error.message);
+                    queues[barber] = [];
+                } else {
+                    queues[barber] = data.map(row => ({ clientId: row.id, name: row.name }));
                 }
-            );
-        });
+            }));
+
+            res.status(200).json(queues);
+        } catch (err) {
+            res.status(500).json({ error: 'Erro ao buscar filas.' });
+        }
     });
-    
+
     return router;
 };
