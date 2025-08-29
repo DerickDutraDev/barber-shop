@@ -277,6 +277,13 @@ h2.text-warning {
     max-width: 300px;
 }
 
+/* Animação de fade-out do modal */
+.fade-out {
+    opacity: 0 !important;
+    transition: opacity 0.5s ease-in-out;
+}
+
+
 /* Botões de seleção no modal */
 #barber-selection-modal .barber-item {
     background-color: var(--secondary-color);
@@ -294,7 +301,7 @@ h2.text-warning {
     background-color: var(--secondary-hover);
     border-color: var(--gold-color);
 }
-#barber-selection-modal .barber-item.selected {
+#barber-selection-modal .barber-item.active {
     border-color: var(--gold-color);
     background-color: var(--gold-color);
     color: var(--bg-color);
